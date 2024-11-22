@@ -32,7 +32,7 @@ impl Emulator {
             i_reg: 0,
             sp: 0,
             stack: [0; STACK_SIZE],
-            keys: [bool; NUM_KEYS],
+            keys: [false; NUM_KEYS],
             dt: 0,
             st: 0,
         }
