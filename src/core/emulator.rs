@@ -71,4 +71,15 @@ impl Emulator {
             self.st -= 1;
         }
     }
+
+    pub fn execute(&mut self, op: Instruction) {
+        match op.digits() {
+            (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
+        }
+    }
+
+    pub fn tick(&mut self) {
+        let op = self.fetch();
+        self.execute(op);
+    }
 }

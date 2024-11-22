@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Instruction(pub u16);
 
 impl Instruction {
