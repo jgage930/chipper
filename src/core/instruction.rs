@@ -1,4 +1,4 @@
-pub struct Instruction(u16);
+pub struct Instruction(pub u16);
 
 impl Instruction {
     pub fn digits(&self) -> (u16, u16, u16, u16) {

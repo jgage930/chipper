@@ -1,3 +1,5 @@
+use super::instruction::Instruction;
+
 const RAM_SIZE: usize = 4096;
 const NUM_REGS: usize = 4096;
 const STACK_SIZE: usize = 16;
@@ -36,6 +38,15 @@ impl Emulator {
             dt: 0,
             st: 0,
         }
+    }
+
+    pub fn fetch(&mut self) -> Instruction {
+        let higher_byte = self.ram[self.pc as usize] as u16;
+        let lower_byte = self.ram[(self.pc + 1) as usize] as u16;
+        let op = (higher_byte << 8) | lower_byte;
+        self.pc += 1;
+
+        Instruction(op)
     }
 
     fn push(&mut self, val: u16) {
