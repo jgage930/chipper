@@ -54,6 +54,9 @@ impl Emulator {
         }
 
         if self.st > 0 {
+            if self.st == 1 {
+                //play sound
+            }
             self.st -= 1;
         }
     }
