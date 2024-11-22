@@ -51,4 +51,11 @@ mod tests {
         let expected = (0x000C, 0x0008, 0x000E, 0x0007);
         assert_eq!(output, expected);
     }
+
+    #[test]
+    fn test_nnn() {
+        let output = instruction().nnn();
+        let expected = 0x08E7;
+        assert_eq!(output, expected);
+    }
 }
