@@ -47,4 +47,14 @@ impl Emulator {
         self.sp -= 1;
         self.stack[self.sp as usize]
     }
+
+    pub fn tick_timers(&mut self) {
+        if self.dt > 0 {
+            self.dt -= 1;
+        }
+
+        if self.st > 0 {
+            self.st -= 1;
+        }
+    }
 }
