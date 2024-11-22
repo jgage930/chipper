@@ -17,22 +17,22 @@ impl Instruction {
 
     // The lowest 4 bits of he instruction.
     pub fn n(&self) -> u16 {
-        todo!();
+        self.0 & 0x000F
     }
 
     // The lowest 4 bits of the high byte.
     pub fn x(&self) -> u16 {
-        todo!();
+        self.digits().1
     }
 
     // The upper 4 bits of the low byte.
     pub fn y(&self) -> u16 {
-        todo!();
+        self.digits().2
     }
 
     // The lowest 8 bits.
     pub fn kk(&self) -> u16 {
-        todo!();
+        self.0 & 0x00FF
     }
 }
 
@@ -56,6 +56,34 @@ mod tests {
     fn test_nnn() {
         let output = instruction().nnn();
         let expected = 0x08E7;
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_n() {
+        let output = instruction().n();
+        let expected = 0x0007;
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_x() {
+        let output = instruction().x();
+        let expected = 0x0008;
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_y() {
+        let output = instruction().y();
+        let expected = 0x000E;
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_kk() {
+        let output = instruction().kk();
+        let expected = 0x00E7;
         assert_eq!(output, expected);
     }
 }
