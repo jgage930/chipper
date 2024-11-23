@@ -72,18 +72,19 @@ impl Emulator {
         }
     }
 
-    pub fn execute(&mut self, op: Instruction) {
+    pub fn execute(&mut self, op: &Instruction) {
         match op.digits() {
             (0, 0, 0, 0) => return,
             (0, 0, 0xE, 0) => self._00E0(),
             (0, 0, 0xE, 0xE) => self._00EE(),
+            (1, _, _, _) => self._1NNN(op),
             (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
 
     pub fn tick(&mut self) {
         let op = self.fetch();
-        self.execute(op);
+        self.execute(&op);
     }
 
     // Instructions
@@ -96,5 +97,10 @@ impl Emulator {
     fn _00EE(&mut self) {
         let return_address = self.pop();
         self.pc = return_address;
+    }
+
+    // Jump
+    fn _1NNN(&mut self, op: &Instruction) {
+        self.pc = op.nnn();
     }
 }
