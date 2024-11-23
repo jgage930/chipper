@@ -74,6 +74,8 @@ impl Emulator {
 
     pub fn execute(&mut self, op: Instruction) {
         match op.digits() {
+            (0, 0, 0, 0) => return,
+            (0, 0, 0xE, 0) => self._00E0(),
             (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -81,5 +83,11 @@ impl Emulator {
     pub fn tick(&mut self) {
         let op = self.fetch();
         self.execute(op);
+    }
+
+    // Instructions
+    // Clear Screen
+    fn _00E0(&mut self) {
+        self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
     }
 }
