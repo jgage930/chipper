@@ -175,4 +175,14 @@ impl Emulator {
         self.v_reg[x as usize] = v_y as u8;
     }
 
+    // Set Vx = Vx Or Vy
+    fn _8xy1(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
+
+        self.v_reg[x as usize] = (v_x | v_y) as u8;
+    }
 }
