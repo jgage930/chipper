@@ -49,16 +49,6 @@ impl Emulator {
         Instruction(op)
     }
 
-    fn push(&mut self, val: u16) {
-        self.stack[self.sp as usize] = val;
-        self.sp += 1;
-    }
-
-    fn pop(&mut self) -> u16 {
-        self.sp -= 1;
-        self.stack[self.sp as usize]
-    }
-
     pub fn tick_timers(&mut self) {
         if self.dt > 0 {
             self.dt -= 1;
@@ -78,6 +68,7 @@ impl Emulator {
             (0, 0, 0xE, 0) => self._00E0(),
             (0, 0, 0xE, 0xE) => self._00EE(),
             (1, _, _, _) => self._1NNN(op),
+            (2, _, _, _) => self._2NNN(op),
             (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -85,6 +76,16 @@ impl Emulator {
     pub fn tick(&mut self) {
         let op = self.fetch();
         self.execute(&op);
+    }
+
+    fn push(&mut self, val: u16) {
+        self.stack[self.sp as usize] = val;
+        self.sp += 1;
+    }
+
+    fn pop(&mut self) -> u16 {
+        self.sp -= 1;
+        self.stack[self.sp as usize]
     }
 
     // Instructions
@@ -101,6 +102,12 @@ impl Emulator {
 
     // Jump
     fn _1NNN(&mut self, op: &Instruction) {
+        self.pc = op.nnn();
+    }
+
+    // Call subroutine.
+    fn _2NNN(&mut self, op: &Instruction) {
+        self.push(self.pc);
         self.pc = op.nnn();
     }
 }
