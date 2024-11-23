@@ -73,6 +73,7 @@ impl Emulator {
             (4, _, _, _)     => self._4xkk(op),
             (5, _, _, 0)     => self._5xy0(op),
             (6, _, _, _)     => self._6xkk(op),
+            (7, _, _, _)     => self._7xkk(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -149,9 +150,18 @@ impl Emulator {
         }
     }
 
-    // set vx
+    // Set vx
     fn _6xkk(&mut self, op: &Instruction) {
         let x = op.x();
         self.v_reg[x as usize] = op.kk() as u8;
+    }
+
+    // Add Vx
+    fn _7xkk(&mut self, op: &Instruction) {
+        let x = op.x();
+        let kk = op.kk();
+
+        let v_x = self.v_reg[x as usize];
+        self.v_reg[x as usize] = v_x + kk as u8;
     }
 }
