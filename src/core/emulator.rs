@@ -54,7 +54,7 @@ impl Emulator {
         self.sp += 1;
     }
 
-    fn pop(&mut self, val: u16) -> u16 {
+    fn pop(&mut self) -> u16 {
         self.sp -= 1;
         self.stack[self.sp as usize]
     }
@@ -76,6 +76,7 @@ impl Emulator {
         match op.digits() {
             (0, 0, 0, 0) => return,
             (0, 0, 0xE, 0) => self._00E0(),
+            (0, 0, 0xE, 0xE) => self._00EE(),
             (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -89,5 +90,11 @@ impl Emulator {
     // Clear Screen
     fn _00E0(&mut self) {
         self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+    }
+
+    // Return from subroutine
+    fn _00EE(&mut self) {
+        let return_address = self.pop();
+        self.pc = return_address;
     }
 }
