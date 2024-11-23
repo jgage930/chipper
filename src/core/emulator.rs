@@ -64,14 +64,15 @@ impl Emulator {
 
     pub fn execute(&mut self, op: &Instruction) {
         match op.digits() {
-            (0, 0, 0, 0) => return,
-            (0, 0, 0xE, 0) => self._00E0(),
-            (0, 0, 0xE, 0xE) => self._00EE(),
-            (1, _, _, _) => self._1NNN(op),
-            (2, _, _, _) => self._2NNN(op),
-            (3, _, _, _) => self._3XKK(op),
-            (4, _, _, _) => self._4XKK(op),
-            (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
+            (0, 0, 0, 0)     => return,
+            (0, 0, 0xE, 0)   => self._00e0(),
+            (0, 0, 0xE, 0xE) => self._00ee(),
+            (1, _, _, _)     => self._1nnn(op),
+            (2, _, _, _)     => self._2nnn(op),
+            (3, _, _, _)     => self._3xkk(op),
+            (4, _, _, _)     => self._4xkk(op),
+            (5, _, _, 0)     => self._5xy0(op),
+            (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
 
@@ -92,29 +93,29 @@ impl Emulator {
 
     // Instructions
     // Clear Screen
-    fn _00E0(&mut self) {
+    fn _00e0(&mut self) {
         self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
     }
 
     // Return from subroutine
-    fn _00EE(&mut self) {
+    fn _00ee(&mut self) {
         let return_address = self.pop();
         self.pc = return_address;
     }
 
     // Jump
-    fn _1NNN(&mut self, op: &Instruction) {
+    fn _1nnn(&mut self, op: &Instruction) {
         self.pc = op.nnn();
     }
 
     // Call subroutine.
-    fn _2NNN(&mut self, op: &Instruction) {
+    fn _2nnn(&mut self, op: &Instruction) {
         self.push(self.pc);
         self.pc = op.nnn();
     }
 
     // Skip next if Vx = kk
-    fn _3XKK(&mut self, op: &Instruction) {
+    fn _3xkk(&mut self, op: &Instruction) {
         let x = op.x();
         let kk = op.kk();
 
@@ -125,12 +126,24 @@ impl Emulator {
     }
 
     // Skip next if Vx != kk
-    fn _4XKK(&mut self, op: &Instruction) {
+    fn _4xkk(&mut self, op: &Instruction) {
         let x = op.x();
         let kk = op.kk();
 
         let v_x = self.v_reg[x as usize] as u16;
         if v_x != kk {
+            self.pc += 2;
+        }
+    }
+
+    // Skip if Vx == Vy
+    fn _5xy0(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize] as u16;
+        let v_y = self.v_reg[y as usize] as u16;
+        if v_x == v_y {
             self.pc += 2;
         }
     }
