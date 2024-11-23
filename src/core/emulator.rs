@@ -74,6 +74,7 @@ impl Emulator {
             (5, _, _, 0)     => self._5xy0(op),
             (6, _, _, _)     => self._6xkk(op),
             (7, _, _, _)     => self._7xkk(op),
+            (8, _, _, 0)     => self._8xy0(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -164,4 +165,14 @@ impl Emulator {
         let v_x = self.v_reg[x as usize];
         self.v_reg[x as usize] = v_x + kk as u8;
     }
+
+    // Set Vx to Vy
+    fn _8xy0(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_y = self.v_reg[y as usize];
+        self.v_reg[x as usize] = v_y as u8;
+    }
+
 }
