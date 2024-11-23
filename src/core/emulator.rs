@@ -70,6 +70,7 @@ impl Emulator {
             (1, _, _, _) => self._1NNN(op),
             (2, _, _, _) => self._2NNN(op),
             (3, _, _, _) => self._3XKK(op),
+            (4, _, _, _) => self._4XKK(op),
             (_, _, _, _) => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -123,13 +124,13 @@ impl Emulator {
         }
     }
 
-    // Skip next if Vx = kk
-    fn _3XKK(&mut self, op: &Instruction) {
+    // Skip next if Vx != kk
+    fn _4XKK(&mut self, op: &Instruction) {
         let x = op.x();
         let kk = op.kk();
 
         let v_x = self.v_reg[x as usize] as u16;
-        if v_x == kk {
+        if v_x != kk {
             self.pc += 2;
         }
     }
