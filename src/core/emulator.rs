@@ -122,4 +122,15 @@ impl Emulator {
             self.pc += 2;
         }
     }
+
+    // Skip next if Vx = kk
+    fn _3XKK(&mut self, op: &Instruction) {
+        let x = op.x();
+        let kk = op.kk();
+
+        let v_x = self.v_reg[x as usize] as u16;
+        if v_x == kk {
+            self.pc += 2;
+        }
+    }
 }
