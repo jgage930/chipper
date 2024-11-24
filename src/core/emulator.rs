@@ -79,6 +79,7 @@ impl Emulator {
             (8, _, _, 2)     => self._8xy2(op),
             (8, _, _, 3)     => self._8xy3(op),
             (8, _, _, 4)     => self._8xy4(op),
+            (8, _, _, 5)     => self._8xy5(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -228,4 +229,24 @@ impl Emulator {
         // but other guides say to keep the whole sum.
         self.v_reg[x as usize] = sum & 0xFF;
     }
+    
+    // SUB Vx, Vy
+    fn _8xy5(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
+
+        let borrow  = if v_x > v_y {
+            1
+        } else {
+            0
+        };
+
+        self.v_reg[0xF] = borrow;
+        self.v_reg[x as usize] -= v_y;
+    }
+
+
 }
