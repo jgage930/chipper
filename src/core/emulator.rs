@@ -78,6 +78,7 @@ impl Emulator {
             (8, _, _, 1)     => self._8xy1(op),
             (8, _, _, 2)     => self._8xy2(op),
             (8, _, _, 3)     => self._8xy3(op),
+            (8, _, _, 4)     => self._8xy4(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -209,5 +210,22 @@ impl Emulator {
         let v_y = self.v_reg[y as usize];
 
         self.v_reg[x as usize] = (v_x ^ v_y) as u8;
+    }
+
+    // ADD Vx, Vy
+    fn _8xy4(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
+
+        let (sum, carry) = v_x.overflowing_add(v_y);
+        let v_f = if carry { 1 } else { 0 };
+
+        self.v_reg[0xF] = v_f;
+        // Cowgod says to only keep lowest 8 bits,
+        // but other guides say to keep the whole sum.
+        self.v_reg[x as usize] = sum & 0xFF;
     }
 }
