@@ -81,6 +81,7 @@ impl Emulator {
             (8, _, _, 4)     => self._8xy4(op),
             (8, _, _, 5)     => self._8xy5(op),
             (8, _, _, 6)     => self._8xy6(op),
+            (8, _, _, 7)     => self._8xy7(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -252,16 +253,27 @@ impl Emulator {
     // SHR Vx {, Vy}
     fn _8xy6(&mut self, op: &Instruction) {
         let x = op.x();
-        let y = op.y();
-
         let v_x = self.v_reg[x as usize];
-        let v_y = self.v_reg[y as usize];
 
         let lsb = v_x & 1;
         let shr  = if lsb == 1 { 1 } else { 0 };
 
         self.v_reg[0xF] = shr;
         self.v_reg[x as usize] /= 2;
+    }
+
+    // SUBN Vx , Vy
+    fn _8xy7(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
+
+        let borrow = if v_y > v_x { 1 } else { 0 };
+
+        self.v_reg[0xF] = borrow;
+        self.v_reg[v_y as usize] -= v_x;
     }
 
 
