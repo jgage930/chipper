@@ -1,4 +1,5 @@
 use super::instruction::Instruction;
+use rand::{self, Rng};
 
 const RAM_SIZE: usize = 4096;
 const NUM_REGS: usize = 4096;
@@ -86,6 +87,7 @@ impl Emulator {
             (9, _, _, 0)     => self._9xy0(op),
             (0xA, _, _, _)   => self._annn(op),
             (0xB, _, _, _)   => self._bnnn(op),
+            (0xC, _, _, _)   => self._cxkk(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -315,5 +317,16 @@ impl Emulator {
     fn _bnnn(&mut self, op: &Instruction) { 
         let v_0 = self.v_reg[0x0]; 
         self.pc = v_0 as u16 + op.nnn();
+    }
+
+    //  RND Vx, byte
+    fn _cxkk(&mut self, op: &Instruction) { 
+        let kk = op.kk();
+
+        let mut rng = rand::thread_rng();
+        let rand: u8 = rng.gen();
+
+        let x = op.x();
+        self.v_reg[x as usize] = rand & kk as u8;
     }
 }
