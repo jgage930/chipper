@@ -92,6 +92,7 @@ impl Emulator {
             (0xE, _, 9, 0xE) => self._ex9e(op),
             (0xE, _, 0xA, 1) => self._exa1(op),
             (0xF, _, 0, 7)   => self._fx07(op),
+            (0xF, _, 0, 0xA) => self._fx0a(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -362,5 +363,20 @@ impl Emulator {
         self.v_reg[x as usize] = self.dt;
     }
 
+    // LD Vx, DT
+    fn _fx0a(&mut self, op: &Instruction) { 
+        let x = op.x();
+        let mut pressed = false;
+        for (i, _) in self.keys.iter().enumerate() {
+            if self.keys[i] {
+                self.v_reg[x as usize] = i as u8;
+                pressed = true;
+                break;
+            }
+        }
 
+        if !pressed {
+            self.pc -= 2;
+        }
+    }
 }
