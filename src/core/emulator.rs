@@ -88,6 +88,9 @@ impl Emulator {
             (0xA, _, _, _)   => self._annn(op),
             (0xB, _, _, _)   => self._bnnn(op),
             (0xC, _, _, _)   => self._cxkk(op),
+            (0xD, _, _, _)   => unimplemented!("Chipper does not yet support drawing"),
+            (0xE, _, 9, 0xE) => self._ex9e(op),
+            (0xE, _, 0xA, 1) => self._exa1(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -328,5 +331,27 @@ impl Emulator {
 
         let x = op.x();
         self.v_reg[x as usize] = rand & kk as u8;
+    }
+
+    // SKP Vx
+    fn _ex9e(&mut self, op: &Instruction) { 
+        let x = op.x();
+        let v_x = self.v_reg[x as usize];
+
+        let key = self.keys[v_x as usize];
+        if key {
+            self.pc += 2;
+        }
+    }
+
+    // SKNP Vx
+    fn _exa1(&mut self, op: &Instruction) { 
+        let x = op.x();
+        let v_x = self.v_reg[x as usize];
+
+        let key = self.keys[v_x as usize];
+        if !key {
+            self.pc += 2;
+        }
     }
 }
