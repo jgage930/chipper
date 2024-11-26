@@ -85,6 +85,7 @@ impl Emulator {
             (8, _, _, 0xE)   => self._8xye(op),
             (9, _, _, 0)     => self._9xy0(op),
             (0xA, _, _, _)   => self._annn(op),
+            (0xB, _, _, _)   => self._bnnn(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -308,5 +309,11 @@ impl Emulator {
     // LD I, addr
     fn _annn(&mut self, op: &Instruction) { 
         self.i_reg = op.nnn();
+    }
+
+    // Jump V0, addr
+    fn _bnnn(&mut self, op: &Instruction) { 
+        let v_0 = self.v_reg[0x0]; 
+        self.pc = v_0 as u16 + op.nnn();
     }
 }
