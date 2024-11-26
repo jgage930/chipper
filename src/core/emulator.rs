@@ -248,5 +248,24 @@ impl Emulator {
         self.v_reg[x as usize] -= v_y;
     }
 
+    // SHR Vx
+    fn _8xy6(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
+
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
+
+        let borrow  = if v_x > v_y {
+            1
+        } else {
+            0
+        };
+
+        self.v_reg[0xF] = borrow;
+        self.v_reg[x as usize] -= v_y;
+    }
+
+
 
 }
