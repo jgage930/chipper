@@ -91,6 +91,7 @@ impl Emulator {
             (0xD, _, _, _)   => unimplemented!("Chipper does not yet support drawing"),
             (0xE, _, 9, 0xE) => self._ex9e(op),
             (0xE, _, 0xA, 1) => self._exa1(op),
+            (0xF, _, 0, 7)   => self._fx07(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -354,4 +355,12 @@ impl Emulator {
             self.pc += 2;
         }
     }
+
+    // LD Vx, DT
+    fn _fx07(&mut self, op: &Instruction) { 
+        let x = op.x();
+        self.v_reg[x as usize] = self.dt;
+    }
+
+
 }
