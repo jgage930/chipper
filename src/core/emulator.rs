@@ -84,6 +84,7 @@ impl Emulator {
             (8, _, _, 7)     => self._8xy7(op),
             (8, _, _, 0xE)   => self._8xye(op),
             (9, _, _, 0)     => self._9xy0(op),
+            (0xA, _, _, _)   => self._annn(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -302,5 +303,10 @@ impl Emulator {
         if v_x != v_y {
             self.pc += 2;
         }
+    }
+
+    // LD I, addr
+    fn _annn(&mut self, op: &Instruction) { 
+        self.i_reg = op.nnn();
     }
 }
