@@ -83,6 +83,7 @@ impl Emulator {
             (8, _, _, 6)     => self._8xy6(op),
             (8, _, _, 7)     => self._8xy7(op),
             (8, _, _, 0xE)   => self._8xye(op),
+            (9, _, _, 0)     => self._9xy0(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -290,6 +291,16 @@ impl Emulator {
 
     }
 
+    // SNE Vx, Vy
+    fn _9xy0(&mut self, op: &Instruction) {
+        let x = op.x();
+        let y = op.y();
 
+        let v_x = self.v_reg[x as usize];
+        let v_y = self.v_reg[y as usize];
 
+        if v_x != v_y {
+            self.pc += 2;
+        }
+    }
 }
