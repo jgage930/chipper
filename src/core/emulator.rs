@@ -82,6 +82,7 @@ impl Emulator {
             (8, _, _, 5)     => self._8xy5(op),
             (8, _, _, 6)     => self._8xy6(op),
             (8, _, _, 7)     => self._8xy7(op),
+            (8, _, _, 0xE)   => self._8xye(op),
             (_, _, _, _)     => unimplemented!("Unimplemented opcode {:?}", op),
         }
     }
@@ -273,7 +274,20 @@ impl Emulator {
         let borrow = if v_y > v_x { 1 } else { 0 };
 
         self.v_reg[0xF] = borrow;
-        self.v_reg[v_y as usize] -= v_x;
+        self.v_reg[x as usize] = v_y - v_x;
+    }
+
+    // SHL Vx , {, Vy}
+    fn _8xye(&mut self, op: &Instruction) {
+        let x = op.x();
+        let v_x = self.v_reg[x as usize];
+
+        let msb = (v_x >> 15) & 1;
+        let shr  = if msb == 1 { 1 } else { 0 };
+
+        self.v_reg[0xF] = shr;
+        self.v_reg[x as usize] *= 2;
+
     }
 
 
